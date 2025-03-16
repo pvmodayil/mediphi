@@ -7,19 +7,26 @@
 #####################################################################################
 #                                     Imports
 #####################################################################################
-import uuid
-import pdfplumber
-import pandas as pd
-from ._types import ExtractedItems
+import pymupdf4llm
+from .contextualizer import MediLMContextualizer
 
-def processPDF(pdf_path: str) -> None:
-    extracted_items: list[ExtractedItems] = []
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            page_content_text: str = page.extract_text()
-            page_content_tables:list[list[list]] = page.extract_tables()
-            
-            # Will only go through loop if tables exist
-            for table_id,table in enumerate(page_content_tables):
-                # Convert extracted table to pandas dataframe
-                df: pd.DataFrame = pd.DataFrame(table[1:], columns=table[0])  # Create DataFrame
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Patient:
+    Name: str
+    age: int
+    sex: str
+    
+def processPDF(patient: Patient,
+               pdf_path: str, 
+               local_llm: str,
+               domain: str = "General Practitioner") -> str:
+    # Convert the full pdf into markdown format
+    pdf_markdown: str = pymupdf4llm.to_markdown(pdf_path)
+    
+    llm_model: MediLMContextualizer = MediLMContextualizer(domain=domain,
+                                                           local_llm=local_llm) 
+    report_summary: str = llm_model.contextualizeDataWithLM(age=patient.age,sex=patient.sex,content_to_summarize=pdf_markdown)
+    
+    return report_summary

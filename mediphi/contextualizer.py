@@ -13,7 +13,6 @@ from PIL import Image
 
 # Typing
 from ._types import OllamaMessage
-
 # Prompts
 from .prompt_template import getContextualizerPrompt, getSystemPrompt,getMedicalContextualizerPrompt
     
@@ -110,8 +109,8 @@ class VLMContextualizer:
 
 class MediLMContextualizer:
     def __init__(self, 
-                 domain: str, 
-                 local_llm: str) -> None:
+                 local_llm: str,
+                 domain: str) -> None:
         # Test if the model exists
         available_models: list[dict[str,str]] = ollama.list()["models"]
         
@@ -120,7 +119,8 @@ class MediLMContextualizer:
         
         # If exists initialize class
         self.model: str = local_llm
-        self.system_prompt: str = getSystemPrompt(key="MEDICAL_ASSISTANT")
+       
+        self.system_prompt: str = getSystemPrompt(key="MEDICAL_ASSISTANT",domain=domain)
 
     def contextualizeDataWithLM(self, 
                                 age: int,

@@ -19,7 +19,7 @@ SYSTEM_PROMPT: dict[str,str] = {
     You will say that you don't know the answer if you don't know the answer, and ask clarification questions if necessary.""",
     
     # Medical field
-    "MEDICAL_ASSISTANT": """You are an assitant to a doctor in a hospital assigned with the task of conveying medical information of a patient.""",
+    "MEDICAL_ASSISTANT": """You are an assitant to a {domain} doctor in a hospital assigned with the task of conveying medical information of a patient.""",
     
     # General question answer prompt
     "QA": """You are a helpful assistant capable of answering questions with accuracy in a concise format.
