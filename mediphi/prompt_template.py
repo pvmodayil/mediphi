@@ -101,9 +101,8 @@ CONTEXTUALIZER_PROMPT: dict[str,str] = {
     Document to be summarized:
     {content_to_summarize}
     
-    The data you are looking at is a pdf file converted into markdown format. You should analyse the report and provide 
-    a detailed summary of the text and tables. You must make sure that the summary can be understood by a common person, 
-    who is not well versed with medical jargons.
+    The data you are looking at is a pdf file converted into markdown format. You should analyse the report and provide a detailed summary of the text and tables. 
+    You must make sure that the summary can be understood by a common person, who is not well versed with medical jargons.
     
     Please structure your response in the following format:
     1. A concise summary of the data.
