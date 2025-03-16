@@ -1,0 +1,6 @@
+# Ignore folder
+data/
+__pycache__/
+
+# Test
+test.ipynb
