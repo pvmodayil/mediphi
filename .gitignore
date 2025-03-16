@@ -1,0 +1,5 @@
+# Ignore data folder
+data/
+
+# Test
+test.ipynb
