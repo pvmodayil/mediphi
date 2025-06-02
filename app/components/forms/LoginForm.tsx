@@ -5,7 +5,7 @@ type User = {
     password: string;
 };
 interface LoginFormProps {
-    onLogin: (user: User) => void;  
+    onLogin: (user: User) => void;  // This function will be called when the user logs in successfully
 }
 
 function LoginForm({onLogin}: LoginFormProps) {
@@ -30,8 +30,9 @@ function LoginForm({onLogin}: LoginFormProps) {
         // Simulate an API call
         try {
             // Insert login database API call here
-            await new Promise((resolve) => setTimeout(resolve, 2000));
             const user = { email, password }; // Include both email and password
+            console.log("User logged in 1:", user);
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             onLogin(user); // Call the onLogin function with the user data
 
         } catch (err: any) {
