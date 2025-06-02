@@ -1,9 +1,19 @@
 import React from 'react'
+import LoginForm from '../../components/forms/LoginForm'
 
-const LogInPage = () => {
+const LoginPage: React.FC = () => {
+  const handleLogin = (user: { email: string; password: string }) => {
+    console.log('User logged in:', user);
+    // Here you can handle the login logic, such as sending the user data to an API
+    // For example, you might call an API to authenticate the user
+  };
+
   return (
-    <div>LogInPage</div>
-  )
-}
+    <div className="login-page">
+      <h1>Login</h1>
+      <LoginForm onLogin={handleLogin} />
+    </div>
+  );
+};
 
-export default LogInPage
+export default LoginPage;
