@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState } from "react";
 
 type User = {
@@ -8,11 +6,6 @@ type User = {
 };
 interface LoginFormProps {
     onLogin: (user: User) => void;  
-}
-
-function onLogin(user: User) {
-    // This function will handle the login logic, such as redirecting the user or updating the UI.
-    console.log("User logged in:", user.email);
 }
 
 function LoginForm({onLogin}: LoginFormProps) {
@@ -114,6 +107,14 @@ function LoginForm({onLogin}: LoginFormProps) {
                     {loading ? "Logging in..." : "Login"}
                 </button>
             </form>
+            <div className="mt-6 text-sm text-gray-600">
+                <p>
+                    Don't have an account?{" "}
+                    <a href="../signup" className="text-cyan-500 hover:underline">
+                        Register
+                    </a>
+                </p>        
+            </div>        
         </div>
     );
 }
