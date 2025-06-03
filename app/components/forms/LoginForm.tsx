@@ -77,7 +77,7 @@ function LoginForm({onLogin}: LoginFormProps) {
                     />
                 </div>
                 <div className="text-left mb-4">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password:</label>
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2"></label>
                     <div className = "relative">
                         <input
                             type={showPassword? "text" : "password"}
