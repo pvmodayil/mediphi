@@ -1,4 +1,7 @@
-<<<<<<< HEAD
+# mediphi
+A vault to store your medical records and get it sent from laboratories. mediphi can summarise you test reports and remove the medical jargons to give you control of  your health information.
+
+## Setup and Run
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -36,6 +39,3 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 =======
-# mediphi
-A vault to store your medical records and get it sent from laboratories. mediphi can summarise you test reports and remove the medical jargons to give you control of  your health information.
->>>>>>> d9d0aa86dc7033beb3c0ea420fe70698a61302fb
