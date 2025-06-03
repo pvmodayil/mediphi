@@ -38,7 +38,6 @@ function SignupForm({ onSignup }: SignupFormProps) {
             // Insert signup database API call here
             const user = { name, email, password }; 
             console.log("User signed up:", user);
-            await new Promise((resolve) => setTimeout(resolve, 2000));
             onSignup(user); // Call the onSignup function with the user data
 
         } catch (err: any) {

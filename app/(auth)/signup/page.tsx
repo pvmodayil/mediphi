@@ -1,12 +1,15 @@
 'use client';
 import React from 'react'
 import SignupForm from '../../components/forms/SignupForm'
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const SignUpPage: React.FC = () => {
+  const router = useRouter();
+
   const handleSignup = (user: { email: string; password: string }) => {
+    
     console.log('User signed up successfully:', user);
-    redirect('./login'); // Redirect to login page after successful signup
+    router.push('./login'); // Redirect to login page after successful signup
   };
   
   return (
