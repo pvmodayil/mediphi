@@ -48,7 +48,7 @@ function LoginForm({onLogin}: LoginFormProps) {
     };
 
     return (
-        <div className="bg-amber-50 backdrop-blur-lg rounded-3xl shadow-2xl p-20 w-full max-w-md text-center border border-white/20 animate-fade-in-up">
+        <div>
             {/* Logo Section */}
             <div className="mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-indigo-500/30">

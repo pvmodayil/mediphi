@@ -54,7 +54,7 @@ function SignupForm({ onSignup }: SignupFormProps) {
     };
 
     return (
-        <div className="bg-amber-50 backdrop-blur-lg rounded-3xl shadow-2xl p-20 w-full max-w-md text-center border border-white/20 animate-fade-in-up">
+        <div>
             {/* Logo Section */}
             <div className="mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-indigo-500/30">
@@ -71,10 +71,10 @@ function SignupForm({ onSignup }: SignupFormProps) {
                 <div className="text-left mb-4">
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2"></label>
                     <input
-                        type="name"
+                        type="text"
                         id="name"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(SignupEvent: React.ChangeEvent<HTMLInputElement>) => setName(SignupEvent.target.value)}
                         required
                         placeholder="Enter your name"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black"
@@ -86,7 +86,7 @@ function SignupForm({ onSignup }: SignupFormProps) {
                         type="email"
                         id="email"
                         value={email}
-                        onChange={(LoginEvent: React.ChangeEvent<HTMLInputElement>) => setEmail(LoginEvent.target.value)}
+                        onChange={(SignupEvent: React.ChangeEvent<HTMLInputElement>) => setEmail(SignupEvent.target.value)}
                         required
                         placeholder="Enter your email or phone number"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black"
@@ -99,7 +99,7 @@ function SignupForm({ onSignup }: SignupFormProps) {
                             type={showPassword? "text" : "password"}
                             id="password"
                             value={password}
-                            onChange={(LoginEvent: React.ChangeEvent<HTMLInputElement>) => setPassword(LoginEvent.target.value)}
+                            onChange={(SignupEvent: React.ChangeEvent<HTMLInputElement>) => setPassword(SignupEvent.target.value)}
                             required
                             placeholder="Enter your password"
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black"
