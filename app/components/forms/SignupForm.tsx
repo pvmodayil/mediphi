@@ -34,7 +34,7 @@ function SignupForm({ onSignup }: SignupFormProps) {
             // verify if user already exists
             // Insert user existence check API call here
             // If user exists, set error message
-
+            console.log("Checking if user exists...");
             // Insert signup database API call here
             const user = { name, email, password }; 
             console.log("User signed up:", user);
