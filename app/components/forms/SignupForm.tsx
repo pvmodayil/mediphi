@@ -124,6 +124,14 @@ function SignupForm({ onSignup }: SignupFormProps) {
                     {loading ? "Logging in..." : "Register"}
                 </button>
             </form>
+            <div className="mt-6 text-sm text-gray-600">
+                <p>
+                    Already have an account?{" "}
+                    <a href="../login" className="text-cyan-500 hover:underline">
+                        Login
+                    </a>
+                </p>        
+            </div>  
         </div>
 
     );
