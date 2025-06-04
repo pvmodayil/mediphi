@@ -21,7 +21,7 @@ export default function Profile() {
   
   return (
     <div>
-      <div className="bg-amber-50 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-full max-w-md border border-white/20 animate-fade-in-up">
+      <div className="bg-amber-200 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-full max-w-md border border-white/20 animate-fade-in-up">
         <div className="flex flex-row items-center mb-4">
           <img
             src="https://ui-avatars.com/api/?name=John+Doe&background=FBBF24&color=065F46&size=128"
@@ -36,8 +36,8 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <div className="py-6" /> {/* Padding between cards */}
-      <div className="bg-amber-50 backdrop-blur-lg rounded-3xl shadow-2xl p-20 w-full max-w-md text-center border border-white/20 animate-fade-in-up">
+      <div className="py-3" /> {/* Padding between cards */}
+      <div className="bg-amber-100 backdrop-blur-lg rounded-3xl shadow-2xl p-20 w-full max-w-md text-center border border-white/20 animate-fade-in-up">
         <div className="p-8">
           <h1 className="text-3xl font-bold mb-4 text-emerald-700">Scan Me</h1>
           <div className="mb-4">
