@@ -10,7 +10,6 @@ type User = {
   dob: string;} 
 
 export default function Profile() {
-
   const user: User = {
     id: "12345",  
     name: "John Doe",
@@ -36,13 +35,16 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <div className="py-3" /> {/* Padding between cards */}
-      <div className="bg-amber-100 backdrop-blur-lg rounded-3xl shadow-2xl p-20 w-full max-w-md text-center border border-white/20 animate-fade-in-up">
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-4 text-emerald-700">Scan Me</h1>
-          <div className="mb-4">
+      <div className="py-6" /> {/* Increased padding between cards */}
+      <div className="bg-amber-100 backdrop-blur-lg rounded-3xl shadow-2xl p-8 w-full max-w-xs mx-auto text-center border border-white/20 animate-fade-in-up">
+        <div className="flex flex-col items-center p-4">
+          <h1 className="text-2xl font-bold mb-2 text-emerald-700">Scan Me</h1>
+          <div className="mb-4 flex justify-center">
             <QRCodeSVG value={qrValue} size={256} />
           </div>
+          <button className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mt-2">
+            <Link href="/medical-records">View Medical Records</Link>
+          </button>
         </div>
       </div>
     </div>
