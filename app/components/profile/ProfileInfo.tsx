@@ -12,7 +12,7 @@ type User = {
 
 export default function ProfileInfo({ user }: { user: User }) {
   return (
-    <div className="bg-amber-200 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-full max-w-md border border-white/20 animate-fade-in-up">
+    <div className="bg-amber-100 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-full max-w-md border border-white/20 animate-fade-in-up">
       <div className="flex flex-row items-center mb-4">
         <img
           src="https://ui-avatars.com/api/?name=John+Doe&background=FBBF24&color=065F46&size=128"
