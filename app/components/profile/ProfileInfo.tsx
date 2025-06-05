@@ -1,6 +1,6 @@
-'use server';
-
+// ProfileInfo.tsx
 import React from 'react';
+import Link from "next/link";
 
 type User = {
   id: string;
@@ -8,19 +8,6 @@ type User = {
   age: number;
   sex: string;
   role: string;
-}
-
-function calculateAge(dob: string): number {
-  const birthDate = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
-
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  return age;
 }
 
 export default function ProfileInfo({ user }: { user: User }) {
@@ -38,23 +25,16 @@ export default function ProfileInfo({ user }: { user: User }) {
           <h3 className="text-xl text-emerald-700">Age: {user.age}, Sex: {user.sex}</h3>
         </div>
       </div>
+      {user.role !== "Doctor" && (
+        <div className="flex justify-end mt-4">
+          <Link href="/doctor-verification">
+            <p className="text-blue-600 hover:underline cursor-pointer">
+              Are you a Doctor?
+            </p>
+          </Link>
+        </div>
+      )}
+      <div className="py-1"/>
     </div>
   );
-}
-
-export async function getServerSideProps() {
-    // Simulating fetching user data from a database or API
-    const user: User = {
-        id: "12345",
-        name: "John Doe",
-        age: calculateAge("1990-01-01"), // Example DOB
-        sex: "Male",
-        role: "Patient",
-    };
-
-  return {
-    props: {
-      user,
-    },
-  };
 }
