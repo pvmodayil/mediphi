@@ -38,37 +38,30 @@ function LoginForm({ onLogin }: LoginFormProps) {
 
     return (
         <div>
-            <div className="mb-10">
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full border border-sage/40 flex items-center justify-center">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-sage-light">
-                            <path d="M12 2L12 22M2 12L22 12M7 7L17 17M17 7L7 17" strokeLinecap="round" />
-                        </svg>
-                    </div>
-                    <span className="font-display text-xl tracking-tight text-cream">MediPhi</span>
+            <div className="mb-8">
+                <div className="w-12 h-12 rounded-2xl bg-accent-light flex items-center justify-center mb-6">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent">
+                        <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                 </div>
-                <h1 className="font-display text-3xl text-cream mb-2 tracking-tight">
-                    Welcome back
-                </h1>
-                <p className="text-stone text-sm font-body">
-                    Sign in to access your medical vault
-                </p>
+                <h1 className="text-2xl font-bold text-text-primary mb-1.5 tracking-tight">Welcome back</h1>
+                <p className="text-text-secondary text-sm">Sign in to access your medical vault</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
-                    <div className="flex items-center gap-2 px-4 py-3 bg-error/10 border border-error/20 rounded-sm">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-error-light flex-shrink-0">
+                    <div className="flex items-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-xl text-sm font-medium overflow-hidden">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0">
                             <circle cx="12" cy="12" r="10" />
                             <line x1="12" y1="8" x2="12" y2="12" />
                             <line x1="12" y1="16" x2="12.01" y2="16" />
                         </svg>
-                        <p className="text-error-light text-sm font-body">{error}</p>
+                        <span className="truncate">{error}</span>
                     </div>
                 )}
 
                 <div>
-                    <label htmlFor="email" className="block text-xs uppercase tracking-wider text-stone/70 font-body mb-2">
+                    <label htmlFor="email" className="block text-sm font-semibold text-text-primary mb-2">
                         Email
                     </label>
                     <input
@@ -78,12 +71,12 @@ function LoginForm({ onLogin }: LoginFormProps) {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         placeholder="your@email.com"
-                        className="w-full px-4 py-3.5 bg-ink border border-ink-lighter rounded-sm text-cream text-sm font-body placeholder:text-stone/40 focus:border-sage/50 focus:ring-1 focus:ring-sage/20 transition-all duration-300"
+                        className="w-full px-4 py-3 bg-warm-bg border border-border rounded-xl text-text-primary text-sm placeholder:text-text-secondary/50 focus:border-accent focus:ring-[3px] focus:ring-accent/15 transition-all duration-200"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="block text-xs uppercase tracking-wider text-stone/70 font-body mb-2">
+                    <label htmlFor="password" className="block text-sm font-semibold text-text-primary mb-2">
                         Password
                     </label>
                     <div className="relative">
@@ -94,12 +87,12 @@ function LoginForm({ onLogin }: LoginFormProps) {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder="••••••••"
-                            className="w-full px-4 py-3.5 pr-16 bg-ink border border-ink-lighter rounded-sm text-cream text-sm font-body placeholder:text-stone/40 focus:border-sage/50 focus:ring-1 focus:ring-sage/20 transition-all duration-300"
+                            className="w-full px-4 py-3 pr-14 bg-warm-bg border border-border rounded-xl text-text-primary text-sm placeholder:text-text-secondary/50 focus:border-accent focus:ring-[3px] focus:ring-accent/15 transition-all duration-200"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-stone/50 hover:text-sage-light font-body uppercase tracking-wider transition-colors"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-text-secondary hover:text-accent transition-colors"
                         >
                             {showPassword ? "Hide" : "Show"}
                         </button>
@@ -109,35 +102,26 @@ function LoginForm({ onLogin }: LoginFormProps) {
                 <button
                     type="submit"
                     disabled={loading}
-                    className={`group relative w-full py-4 px-6 bg-sage hover:bg-sage-light text-cream font-body font-medium text-sm tracking-wide rounded-sm transition-all duration-300 overflow-hidden ${
-                        loading ? 'opacity-60 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-full whitespace-nowrap py-3.5 px-4 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-sm shadow-accent/20 hover:shadow-md hover:shadow-accent/25 flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                        {loading ? (
-                            <>
-                                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                                Signing in...
-                            </>
-                        ) : (
-                            <>
-                                Sign In
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 group-hover:translate-x-1">
-                                    <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </>
-                        )}
-                    </span>
+                    {loading ? (
+                        <>
+                            <svg className="animate-spin h-4 w-4 flex-shrink-0" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            Signing in...
+                        </>
+                    ) : (
+                        'Sign in'
+                    )}
                 </button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-ink-lighter/50 text-center">
-                <p className="text-stone/60 text-sm font-body">
+            <div className="mt-6 pt-6 border-t border-border text-center">
+                <p className="text-sm text-text-secondary">
                     Don&apos;t have an account?{" "}
-                    <a href="/signup" className="text-sage-light hover:text-cream transition-colors duration-300">
+                    <a href="/signup" className="font-semibold text-accent hover:text-accent-hover transition-colors">
                         Create one
                     </a>
                 </p>
