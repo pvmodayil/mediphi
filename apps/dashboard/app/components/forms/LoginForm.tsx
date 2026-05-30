@@ -4,118 +4,144 @@ type User = {
     email: string;
     password: string;
 };
+
 interface LoginFormProps {
-    onLogin: (user: User) => void;  // This function will be called when the user logs in successfully
+    onLogin: (user: User) => void;
 }
 
-function LoginForm({onLogin}: LoginFormProps) {
-    // State to hold the email and password
-    const [email, setEmail] = useState<string>(""); 
+function LoginForm({ onLogin }: LoginFormProps) {
+    const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [showPassword, setShowPassword] = useState<boolean>(false); // State to toggle password visibility
-    
-    // Function to handle form submission
-    const handleSubmit = async (LoginEvent: React.FormEvent) => {
-        LoginEvent.preventDefault(); // Will notallow to submit with the default action
-        // Validate email and password
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (!email || !password) {
             setError("Email and password are required.");
             return;
         }
-        setLoading(true); // Indicate that the login process has started
-        setError(null); // Clear any previous error messages
+        setLoading(true);
+        setError(null);
 
-        // Simulate an API call
         try {
-            // Insert login database API call here
-            const user = { email, password }; // Include both email and password
-            console.log("User logged in 1:", user);
+            const user = { email, password };
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            onLogin(user); // Call the onLogin function with the user data
-
-        } catch (err: any) {
+            onLogin(user);
+        } catch {
             setError("Login failed. Please try again.");
         } finally {
             setLoading(false);
-        }   
-    };
-
-    // Function to toggle password visibility
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+        }
     };
 
     return (
         <div>
-            {/* Logo Section */}
-            <div className="mb-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-indigo-500/30">
-                Med
+            <div className="mb-10">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full border border-sage/40 flex items-center justify-center">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-sage-light">
+                            <path d="M12 2L12 22M2 12L22 12M7 7L17 17M17 7L7 17" strokeLinecap="round" />
+                        </svg>
+                    </div>
+                    <span className="font-display text-xl tracking-tight text-cream">MediPhi</span>
+                </div>
+                <h1 className="font-display text-3xl text-cream mb-2 tracking-tight">
+                    Welcome back
+                </h1>
+                <p className="text-stone text-sm font-body">
+                    Sign in to access your medical vault
+                </p>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-green-500 via-emerald-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-                MediPhi
-            </h1>
-            <p className="text-gray-600 text-sm">
-                Welcome back! Please sign in to your account
-            </p>
-            </div>
-            {/* Login Form Section */}
-            <form onSubmit={handleSubmit} className="form-group">
-                {error && <p className="error">{error}</p>}
-                <div className="text-left mb-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2"></label>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-error/10 border border-error/20 rounded-sm">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-error-light flex-shrink-0">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                        <p className="text-error-light text-sm font-body">{error}</p>
+                    </div>
+                )}
+
+                <div>
+                    <label htmlFor="email" className="block text-xs uppercase tracking-wider text-stone/70 font-body mb-2">
+                        Email
+                    </label>
                     <input
                         type="email"
                         id="email"
                         value={email}
-                        onChange={(LoginEvent: React.ChangeEvent<HTMLInputElement>) => setEmail(LoginEvent.target.value)}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
-                        placeholder="Enter your email or phone number"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black"
+                        placeholder="your@email.com"
+                        className="w-full px-4 py-3.5 bg-ink border border-ink-lighter rounded-sm text-cream text-sm font-body placeholder:text-stone/40 focus:border-sage/50 focus:ring-1 focus:ring-sage/20 transition-all duration-300"
                     />
                 </div>
-                <div className="text-left mb-4">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2"></label>
-                    <div className = "relative">
+
+                <div>
+                    <label htmlFor="password" className="block text-xs uppercase tracking-wider text-stone/70 font-body mb-2">
+                        Password
+                    </label>
+                    <div className="relative">
                         <input
-                            type={showPassword? "text" : "password"}
+                            type={showPassword ? "text" : "password"}
                             id="password"
                             value={password}
-                            onChange={(LoginEvent: React.ChangeEvent<HTMLInputElement>) => setPassword(LoginEvent.target.value)}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
-                            placeholder="Enter your password"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-black"
+                            placeholder="••••••••"
+                            className="w-full px-4 py-3.5 pr-16 bg-ink border border-ink-lighter rounded-sm text-cream text-sm font-body placeholder:text-stone/40 focus:border-sage/50 focus:ring-1 focus:ring-sage/20 transition-all duration-300"
                         />
                         <button
                             type="button"
-                            onClick={togglePasswordVisibility}
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-300"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-stone/50 hover:text-sage-light font-body uppercase tracking-wider transition-colors"
                         >
-                            {showPassword? "Hide" : "Show"}
+                            {showPassword ? "Hide" : "Show"}
                         </button>
                     </div>
                 </div>
-                <button type="submit" 
-                disabled={loading} 
-                className={`w-full py-4 px-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-indigo-500/30 ${
-              loading 
-                ? 'opacity-70 cursor-not-allowed' 
-                : 'hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/40 active:translate-y-0'
-            }`}
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className={`group relative w-full py-4 px-6 bg-sage hover:bg-sage-light text-cream font-body font-medium text-sm tracking-wide rounded-sm transition-all duration-300 overflow-hidden ${
+                        loading ? 'opacity-60 cursor-not-allowed' : ''
+                    }`}
                 >
-                    {loading ? "Logging in..." : "Login"}
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                        {loading ? (
+                            <>
+                                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Signing in...
+                            </>
+                        ) : (
+                            <>
+                                Sign In
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 group-hover:translate-x-1">
+                                    <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </>
+                        )}
+                    </span>
                 </button>
             </form>
-            <div className="mt-6 text-sm text-gray-600">
-                <p>
-                    Don't have an account?{" "}
-                    <a href="../signup" className="text-cyan-500 hover:underline">
-                        Register
+
+            <div className="mt-8 pt-6 border-t border-ink-lighter/50 text-center">
+                <p className="text-stone/60 text-sm font-body">
+                    Don&apos;t have an account?{" "}
+                    <a href="/signup" className="text-sage-light hover:text-cream transition-colors duration-300">
+                        Create one
                     </a>
-                </p>        
-            </div>        
+                </p>
+            </div>
         </div>
     );
 }
