@@ -1,6 +1,3 @@
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- Custom types
 CREATE TYPE hospital_type AS ENUM ('hospital', 'lab', 'clinic');
 CREATE TYPE staff_role AS ENUM ('doctor', 'nurse', 'lab_technician', 'admin');
@@ -24,7 +21,7 @@ CREATE TABLE profiles (
 
 -- Hospitals table
 CREATE TABLE hospitals (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   registration_number TEXT UNIQUE NOT NULL,
   type hospital_type NOT NULL,
@@ -45,7 +42,7 @@ CREATE TABLE staff (
 
 -- Medical records table (FHIR resources as JSONB)
 CREATE TABLE medical_records (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   fhir_resource_type TEXT NOT NULL,
   fhir_data JSONB NOT NULL,
@@ -58,7 +55,7 @@ CREATE TABLE medical_records (
 
 -- Documents table
 CREATE TABLE documents (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   storage_path TEXT NOT NULL,
   file_name TEXT NOT NULL,
@@ -71,7 +68,7 @@ CREATE TABLE documents (
 
 -- Record shares table
 CREATE TABLE record_shares (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   hospital_id UUID REFERENCES hospitals(id) ON DELETE CASCADE NOT NULL,
   scope JSONB NOT NULL,
@@ -82,7 +79,7 @@ CREATE TABLE record_shares (
 
 -- QR sessions table
 CREATE TABLE qr_sessions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   token TEXT UNIQUE NOT NULL,
   session_type qr_session_type NOT NULL,
   patient_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
@@ -94,7 +91,7 @@ CREATE TABLE qr_sessions (
 
 -- Pending submissions table
 CREATE TABLE pending_submissions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   hospital_id UUID REFERENCES hospitals(id) ON DELETE CASCADE NOT NULL,
   fhir_resource_type TEXT NOT NULL,
