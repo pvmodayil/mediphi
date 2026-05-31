@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,10 +6,12 @@ import {
   ScrollView,
   Pressable,
   RefreshControl,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../../components/common/Card';
 import { EmptyState } from '../../components/common/EmptyState';
+import { Icon } from '../../components/common/Icon';
 import { useMedicalRecords } from '../../hooks/useMedicalRecords';
 import { theme } from '../../theme';
 import { formatDate } from '../../utils/formatters';
@@ -26,6 +28,15 @@ const CATEGORY_LABELS: Record<string, string> = {
   DiagnosticReport: 'Reports',
 };
 
+const CATEGORY_ICONS: Record<string, 'flask' | 'stethoscope' | 'pill' | 'syringe' | 'clipboard' | 'file-text'> = {
+  All: 'file-text',
+  Observation: 'flask',
+  Condition: 'stethoscope',
+  MedicationStatement: 'pill',
+  Immunization: 'syringe',
+  DiagnosticReport: 'clipboard',
+};
+
 type RecordsListScreenProps = {
   navigation: NativeStackNavigationProp<RecordsStackParamList, 'RecordsList'>;
 };
@@ -33,6 +44,16 @@ type RecordsListScreenProps = {
 export function RecordsListScreen({ navigation }: RecordsListScreenProps) {
   const { records, loading } = useMedicalRecords();
   const [activeCategory, setActiveCategory] = useState('All');
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(12)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
+    ]).start();
+  }, []);
 
   const filteredRecords =
     activeCategory === 'All'
@@ -60,6 +81,12 @@ export function RecordsListScreen({ navigation }: RecordsListScreenProps) {
               activeCategory === category && styles.categoryPillActive,
             ]}
           >
+            <Icon
+              name={CATEGORY_ICONS[category]}
+              size={14}
+              color={activeCategory === category ? theme.colors.white : theme.colors.textSecondary}
+              strokeWidth={1.8}
+            />
             <Text
               style={[
                 styles.categoryText,
@@ -74,58 +101,52 @@ export function RecordsListScreen({ navigation }: RecordsListScreenProps) {
 
       <ScrollView
         contentContainerStyle={styles.listContent}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={() => {}} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={() => {}} tintColor={theme.colors.accent} />}
       >
-        {filteredRecords.length === 0 && !loading ? (
-          <EmptyState
-            title="No records found"
-            subtitle={`You don't have any ${CATEGORY_LABELS[activeCategory].toLowerCase()} yet.`}
-          />
-        ) : (
-          <View style={styles.recordsList}>
-            {filteredRecords.map((record) => (
-              <Pressable
-                key={record.id}
-                onPress={() =>
-                  navigation.navigate('RecordDetail', { recordId: record.id })
-                }
-              >
-                <Card style={styles.recordCard}>
-                  <View style={styles.recordRow}>
-                    <View style={styles.recordIcon}>
-                      <Text style={styles.recordIconText}>
-                        {getRecordIcon(record.fhir_resource_type)}
-                      </Text>
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+          {filteredRecords.length === 0 && !loading ? (
+            <EmptyState
+              title="No records found"
+              subtitle={`You don't have any ${CATEGORY_LABELS[activeCategory].toLowerCase()} yet.`}
+            />
+          ) : (
+            <View style={styles.recordsList}>
+              {filteredRecords.map((record, index) => (
+                <Pressable
+                  key={record.id}
+                  onPress={() =>
+                    navigation.navigate('RecordDetail', { recordId: record.id })
+                  }
+                >
+                  <Card style={styles.recordCard} variant="elevated">
+                    <View style={styles.recordRow}>
+                      <View style={styles.recordIcon}>
+                        <Icon
+                          name={CATEGORY_ICONS[record.fhir_resource_type] || 'file-text'}
+                          size={20}
+                          color={theme.colors.accent}
+                          strokeWidth={1.8}
+                        />
+                      </View>
+                      <View style={styles.recordInfo}>
+                        <Text style={styles.recordType}>
+                          {record.fhir_resource_type}
+                        </Text>
+                        <Text style={styles.recordDate}>
+                          {formatDate(record.recorded_at)}
+                        </Text>
+                      </View>
+                      <Icon name="chevron-right" size={18} color={theme.colors.textSecondary} strokeWidth={2} />
                     </View>
-                    <View style={styles.recordInfo}>
-                      <Text style={styles.recordType}>
-                        {record.fhir_resource_type}
-                      </Text>
-                      <Text style={styles.recordDate}>
-                        {formatDate(record.recorded_at)}
-                      </Text>
-                    </View>
-                    <Text style={styles.chevron}>›</Text>
-                  </View>
-                </Card>
-              </Pressable>
-            ))}
-          </View>
-        )}
+                  </Card>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function getRecordIcon(type: string): string {
-  switch (type) {
-    case 'Observation': return '🔬';
-    case 'Condition': return '🩺';
-    case 'MedicationStatement': return '💊';
-    case 'Immunization': return '💉';
-    case 'DiagnosticReport': return '📋';
-    default: return '📄';
-  }
 }
 
 const styles = StyleSheet.create({
@@ -143,13 +164,16 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
   },
   categoryContainer: {
-    maxHeight: 60,
+    maxHeight: 56,
   },
   categoryScroll: {
     paddingHorizontal: theme.spacing.lg,
     gap: theme.spacing.sm,
   },
   categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
@@ -160,6 +184,7 @@ const styles = StyleSheet.create({
   categoryPillActive: {
     backgroundColor: theme.colors.accent,
     borderColor: theme.colors.accent,
+    ...theme.shadows.sm,
   },
   categoryText: {
     ...theme.typography.bodySmall,
@@ -186,14 +211,11 @@ const styles = StyleSheet.create({
   recordIcon: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 12,
     backgroundColor: theme.colors.accentLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: theme.spacing.md,
-  },
-  recordIconText: {
-    fontSize: 20,
   },
   recordInfo: {
     flex: 1,
@@ -204,12 +226,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   recordDate: {
-    ...theme.typography.bodySmall,
+    ...theme.typography.caption,
     color: theme.colors.textSecondary,
-  },
-  chevron: {
-    fontSize: 24,
-    color: theme.colors.textSecondary,
-    fontWeight: '300',
+    marginTop: 2,
   },
 });

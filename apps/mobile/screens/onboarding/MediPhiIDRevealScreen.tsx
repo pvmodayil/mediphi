@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, Animated, Pressable, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../../components/common/Button';
+import { Icon } from '../../components/common/Icon';
 import { useAuth } from '../../context/AuthContext';
 import { useProfile } from '../../hooks/useProfile';
 import { theme } from '../../theme';
@@ -10,7 +11,7 @@ export function MediPhiIDRevealScreen() {
   const { completeOnboarding } = useAuth();
   const { profile, loading } = useProfile();
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -21,7 +22,7 @@ export function MediPhiIDRevealScreen() {
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
-        friction: 5,
+        friction: 6,
         useNativeDriver: true,
       }),
     ]).start();
@@ -33,6 +34,12 @@ export function MediPhiIDRevealScreen() {
     }
   };
 
+  const infoItems = [
+    { icon: 'stethoscope' as const, text: 'Share this ID with hospitals' },
+    { icon: 'qr' as const, text: 'Scan hospital QR codes to link' },
+    { icon: 'shield' as const, text: 'Control who sees your data' },
+  ];
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -43,7 +50,7 @@ export function MediPhiIDRevealScreen() {
           ]}
         >
           <View style={styles.iconContainer}>
-            <Text style={styles.icon}>🎉</Text>
+            <Icon name="logo" size={32} color={theme.colors.accent} strokeWidth={1.8} />
           </View>
 
           <Text style={styles.congratsText}>Welcome to MediPhi!</Text>
@@ -57,16 +64,20 @@ export function MediPhiIDRevealScreen() {
               {loading ? 'Generating...' : profile?.mediphi_id || 'MPH-XXXXXX'}
             </Text>
             <Pressable onPress={handleCopy} style={styles.copyButton}>
-              <Text style={styles.copyButtonText}>📋 Copy to Clipboard</Text>
+              <Icon name="copy" size={16} color={theme.colors.accent} strokeWidth={2} />
+              <Text style={styles.copyButtonText}>Copy to Clipboard</Text>
             </Pressable>
           </View>
 
           <View style={styles.infoBox}>
-            <Text style={styles.infoText}>
-              • Share this ID with hospitals{'\n'}
-              • Scan hospital QR codes to link{'\n'}
-              • Control who sees your data
-            </Text>
+            {infoItems.map((item, index) => (
+              <View key={index} style={styles.infoItem}>
+                <View style={styles.infoIcon}>
+                  <Icon name={item.icon} size={16} color={theme.colors.sage} strokeWidth={1.8} />
+                </View>
+                <Text style={styles.infoText}>{item.text}</Text>
+              </View>
+            ))}
           </View>
         </Animated.View>
       </View>
@@ -74,6 +85,7 @@ export function MediPhiIDRevealScreen() {
       <View style={styles.footer}>
         <Button
           title="Continue to Dashboard"
+          rightIcon="arrow-right"
           onPress={completeOnboarding}
         />
       </View>
@@ -90,28 +102,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.xxxl,
   },
   revealContainer: {
     alignItems: 'center',
     width: '100%',
   },
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 72,
+    height: 72,
+    borderRadius: 24,
     backgroundColor: theme.colors.accentLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: theme.spacing.lg,
   },
-  icon: {
-    fontSize: 40,
-  },
   congratsText: {
     ...theme.typography.heading1,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.sm,
+    textAlign: 'center',
   },
   description: {
     ...theme.typography.body,
@@ -121,17 +131,14 @@ const styles = StyleSheet.create({
   },
   idCard: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: theme.borderRadius.xxl,
     padding: theme.spacing.xl,
     alignItems: 'center',
     width: '100%',
     borderWidth: 2,
     borderColor: theme.colors.accent,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    ...theme.shadows.lg,
+    marginBottom: theme.spacing.xl,
   },
   idLabel: {
     ...theme.typography.caption,
@@ -139,14 +146,19 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: theme.spacing.sm,
+    fontWeight: '600',
   },
   idValue: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: '700',
     color: theme.colors.accent,
     marginBottom: theme.spacing.md,
+    letterSpacing: -0.5,
   },
   copyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
     backgroundColor: theme.colors.accentLight,
@@ -158,20 +170,30 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   infoBox: {
-    marginTop: theme.spacing.xl,
-    backgroundColor: theme.colors.sageLight,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.lg,
     width: '100%',
+    gap: theme.spacing.md,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  infoIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: theme.colors.sageLight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   infoText: {
     ...theme.typography.body,
     color: theme.colors.sage,
-    lineHeight: 28,
+    fontWeight: '500',
   },
   footer: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingBottom: theme.spacing.xxl,
+    paddingHorizontal: theme.spacing.xxxl,
+    paddingBottom: theme.spacing.huge,
     width: '100%',
   },
 });

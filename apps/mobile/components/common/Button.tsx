@@ -1,21 +1,25 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   Pressable,
   StyleSheet,
   Text,
   ViewStyle,
   TextStyle,
+  Animated,
 } from 'react-native';
 import { theme } from '../../theme';
+import { Icon, IconName } from './Icon';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost';
   size?: 'default' | 'small';
   disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  leftIcon?: IconName;
+  rightIcon?: IconName;
 }
 
 export function Button({
@@ -26,59 +30,102 @@ export function Button({
   disabled = false,
   style,
   textStyle,
+  leftIcon,
+  rightIcon,
 }: ButtonProps) {
-  const buttonStyles = [
-    styles.base,
-    size === 'small' && styles.small,
-    variant === 'primary' && styles.primary,
-    variant === 'secondary' && styles.secondary,
-    variant === 'outline' && styles.outline,
-    variant === 'danger' && styles.danger,
-    disabled && styles.disabled,
-    style,
-  ];
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const textStyles = [
-    styles.text,
-    size === 'small' && styles.smallText,
-    variant === 'primary' && styles.primaryText,
-    variant === 'secondary' && styles.secondaryText,
-    variant === 'outline' && styles.outlineText,
-    variant === 'danger' && styles.dangerText,
-    disabled && styles.disabledText,
-    textStyle,
-  ];
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.97,
+      useNativeDriver: true,
+      friction: 8,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 8,
+    }).start();
+  };
+
+  const backgroundStyles = {
+    primary: styles.primary,
+    secondary: styles.secondary,
+    outline: styles.outline,
+    danger: styles.danger,
+    ghost: styles.ghost,
+  }[variant];
+
+  const textStyles = {
+    primary: styles.primaryText,
+    secondary: styles.secondaryText,
+    outline: styles.outlineText,
+    danger: styles.dangerText,
+    ghost: styles.ghostText,
+  }[variant];
+
+  const iconColor = {
+    primary: theme.colors.white,
+    secondary: theme.colors.accent,
+    outline: theme.colors.accent,
+    danger: theme.colors.error,
+    ghost: theme.colors.textSecondary,
+  }[variant];
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      style={({ pressed }) => [
-        ...buttonStyles,
-        pressed && !disabled && styles.pressed,
-      ]}
-    >
-      <Text style={textStyles}>{title}</Text>
-    </Pressable>
+    <Animated.View style={{ transform: [{ scale: scaleAnim }], width: '100%' }}>
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={({ pressed }) => [
+          styles.base,
+          size === 'small' && styles.small,
+          backgroundStyles,
+          disabled && styles.disabled,
+          pressed && !disabled && styles.pressed,
+          style,
+        ]}
+      >
+        {leftIcon && (
+          <Icon name={leftIcon} size={18} color={iconColor} strokeWidth={2} />
+        )}
+        <Text style={[styles.text, size === 'small' && styles.smallText, textStyles, disabled && styles.disabledText, textStyle]}>
+          {title}
+        </Text>
+        {rightIcon && (
+          <Icon name={rightIcon} size={18} color={iconColor} strokeWidth={2} />
+        )}
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.borderRadius.md,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 52,
+    gap: theme.spacing.sm,
+    paddingVertical: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.xl,
+    borderRadius: theme.borderRadius.lg,
+    minHeight: 56,
+    width: '100%',
   },
   small: {
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    minHeight: 40,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    minHeight: 44,
+    borderRadius: theme.borderRadius.md,
   },
   primary: {
     backgroundColor: theme.colors.accent,
+    ...theme.shadows.md,
   },
   secondary: {
     backgroundColor: theme.colors.accentLight,
@@ -91,17 +138,21 @@ const styles = StyleSheet.create({
   danger: {
     backgroundColor: theme.colors.errorLight,
   },
+  ghost: {
+    backgroundColor: 'transparent',
+  },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.45,
   },
   pressed: {
-    opacity: 0.9,
+    opacity: 0.92,
   },
   text: {
     ...theme.typography.button,
   },
   smallText: {
     fontSize: 14,
+    fontWeight: '600',
   },
   primaryText: {
     color: theme.colors.white,
@@ -114,6 +165,9 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     color: theme.colors.error,
+  },
+  ghostText: {
+    color: theme.colors.textSecondary,
   },
   disabledText: {
     color: theme.colors.textSecondary,

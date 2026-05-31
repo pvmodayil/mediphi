@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,13 +6,16 @@ import {
   TextInputProps,
   View,
   Pressable,
+  Animated,
 } from 'react-native';
 import { theme } from '../../theme';
+import { Icon, IconName } from './Icon';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   containerStyle?: object;
+  leftIcon?: IconName;
 }
 
 export function Input({
@@ -21,19 +24,66 @@ export function Input({
   secureTextEntry,
   containerStyle,
   style,
+  leftIcon,
   ...textInputProps
 }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const isPassword = secureTextEntry;
+
+  const borderColorAnim = useRef(new Animated.Value(0)).current;
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    Animated.timing(borderColorAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+    if (textInputProps.onFocus) textInputProps.onFocus({} as any);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    Animated.timing(borderColorAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+    if (textInputProps.onBlur) textInputProps.onBlur({} as any);
+  };
+
+  const borderColor = borderColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [error ? theme.colors.error : theme.colors.border, error ? theme.colors.error : theme.colors.accent],
+  });
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputContainer, error && styles.inputError]}>
+      <Animated.View
+        style={[
+          styles.inputContainer,
+          error && styles.inputError,
+          { borderColor },
+        ]}
+      >
+        {leftIcon && (
+          <View style={styles.leftIcon}>
+            <Icon
+              name={leftIcon}
+              size={18}
+              color={isFocused ? theme.colors.accent : theme.colors.textSecondary}
+              strokeWidth={1.8}
+            />
+          </View>
+        )}
         <TextInput
           style={[styles.input, style]}
           placeholderTextColor={theme.colors.textSecondary}
           secureTextEntry={isPassword && !isPasswordVisible}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...textInputProps}
         />
         {isPassword && (
@@ -41,12 +91,15 @@ export function Input({
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             style={styles.visibilityToggle}
           >
-            <Text style={styles.visibilityText}>
-              {isPasswordVisible ? 'Hide' : 'Show'}
-            </Text>
+            <Icon
+              name={isPasswordVisible ? 'eye-off' : 'eye'}
+              size={18}
+              color={theme.colors.textSecondary}
+              strokeWidth={1.8}
+            />
           </Pressable>
         )}
-      </View>
+      </Animated.View>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -54,26 +107,28 @@ export function Input({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
   label: {
-    ...theme.typography.bodySmall,
+    ...theme.typography.label,
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
-    fontWeight: '500',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1.5,
     borderColor: theme.colors.border,
-    minHeight: 52,
-    paddingHorizontal: theme.spacing.md,
+    minHeight: 56,
+    paddingHorizontal: theme.spacing.lg,
   },
   inputError: {
     borderColor: theme.colors.error,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.sm,
   },
   input: {
     flex: 1,
@@ -83,11 +138,6 @@ const styles = StyleSheet.create({
   },
   visibilityToggle: {
     paddingLeft: theme.spacing.sm,
-  },
-  visibilityText: {
-    ...theme.typography.bodySmall,
-    color: theme.colors.accent,
-    fontWeight: '600',
   },
   errorText: {
     ...theme.typography.caption,

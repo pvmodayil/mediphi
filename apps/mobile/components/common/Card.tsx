@@ -5,21 +5,35 @@ import { theme } from '../../theme';
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
+  variant?: 'default' | 'elevated' | 'outlined';
 }
 
-export function Card({ children, style }: CardProps) {
-  return <View style={[styles.card, style]}>{children}</View>;
+export function Card({ children, style, variant = 'default' }: CardProps) {
+  const variantStyles = {
+    default: styles.default,
+    elevated: styles.elevated,
+    outlined: styles.outlined,
+  }[variant];
+
+  return <View style={[styles.base, variantStyles, style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
-  card: {
+  base: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+  },
+  default: {
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
+  },
+  elevated: {
+    ...theme.shadows.lg,
+  },
+  outlined: {
+    borderWidth: 1.5,
+    borderColor: theme.colors.border,
   },
 });

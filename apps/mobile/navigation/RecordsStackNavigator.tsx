@@ -12,17 +12,9 @@ const Stack = createNativeStackNavigator<RecordsStackParamList>();
 
 export function RecordsStackNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="RecordsList"
-        component={RecordsListScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="RecordDetail"
-        component={RecordDetailScreen}
-        options={{ title: 'Record Detail', headerBackTitle: 'Back' }}
-      />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="RecordsList" component={RecordsListScreen} />
+      <Stack.Screen name="RecordDetail" component={RecordDetailScreen} />
     </Stack.Navigator>
   );
 }

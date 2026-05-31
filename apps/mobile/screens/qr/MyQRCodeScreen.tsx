@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Clipboard } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Clipboard, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { useAuth } from '../../context/AuthContext';
 import { useProfile } from '../../hooks/useProfile';
 import { theme } from '../../theme';
+import { Icon } from '../../components/common/Icon';
 
 export function MyQRCodeScreen() {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ export function MyQRCodeScreen() {
         <View style={styles.qrContainer}>
           <QRCode
             value={qrPayload}
-            size={240}
+            size={220}
             backgroundColor="white"
             color={theme.colors.textPrimary}
           />
@@ -40,14 +41,19 @@ export function MyQRCodeScreen() {
 
         <View style={styles.infoCard}>
           <Text style={styles.nameText}>{profile?.full_name || 'Loading...'}</Text>
-          <Text style={styles.idText} onPress={handleCopy}>
-            {profile?.mediphi_id || 'MPH-XXXXXX'} 📋
-          </Text>
+          <Pressable onPress={handleCopy} style={styles.idRow}>
+            <Text style={styles.idText}>{profile?.mediphi_id || 'MPH-XXXXXX'}</Text>
+            <Icon name="copy" size={16} color={theme.colors.accent} strokeWidth={2} />
+          </Pressable>
         </View>
 
         <View style={styles.instructions}>
+          <View style={styles.instructionHeader}>
+            <Icon name="info" size={18} color={theme.colors.sage} strokeWidth={2} />
+            <Text style={styles.instructionTitle}>How it works</Text>
+          </View>
           <Text style={styles.instructionText}>
-            Hospitals can scan this code to request access to your medical records.
+            Hospitals can scan this code to request access to your medical records. You control what they see and for how long.
           </Text>
         </View>
       </View>
@@ -64,7 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: theme.spacing.xl,
+    padding: theme.spacing.xxxl,
   },
   title: {
     ...theme.typography.heading2,
@@ -80,13 +86,9 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     backgroundColor: theme.colors.white,
-    padding: theme.spacing.lg,
-    borderRadius: theme.borderRadius.lg,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    padding: theme.spacing.xl,
+    borderRadius: theme.borderRadius.xxl,
+    ...theme.shadows.lg,
     marginBottom: theme.spacing.xl,
   },
   infoCard: {
@@ -98,6 +100,15 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     marginBottom: theme.spacing.xs,
   },
+  idRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    backgroundColor: theme.colors.accentLight,
+    borderRadius: theme.borderRadius.md,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
   idText: {
     ...theme.typography.body,
     color: theme.colors.accent,
@@ -105,14 +116,26 @@ const styles = StyleSheet.create({
   },
   instructions: {
     backgroundColor: theme.colors.sageLight,
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
     width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(122, 155, 138, 0.15)',
+  },
+  instructionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+  },
+  instructionTitle: {
+    ...theme.typography.bodySmall,
+    color: theme.colors.sage,
+    fontWeight: '600',
   },
   instructionText: {
     ...theme.typography.bodySmall,
     color: theme.colors.sage,
-    textAlign: 'center',
     lineHeight: 22,
   },
 });

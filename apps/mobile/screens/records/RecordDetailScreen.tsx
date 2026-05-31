@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from '../../components/common/Card';
 import { LoadingScreen } from '../../components/common/LoadingScreen';
+import { Icon } from '../../components/common/Icon';
 import { useMedicalRecords } from '../../hooks/useMedicalRecords';
 import { theme } from '../../theme';
 import { formatDateTime } from '../../utils/formatters';
@@ -15,7 +16,7 @@ type RecordDetailScreenProps = {
   route: RouteProp<RecordsStackParamList, 'RecordDetail'>;
 };
 
-export function RecordDetailScreen({ route }: RecordDetailScreenProps) {
+export function RecordDetailScreen({ navigation, route }: RecordDetailScreenProps) {
   const { recordId } = route.params;
   const { records, loading } = useMedicalRecords();
 
@@ -66,8 +67,14 @@ export function RecordDetailScreen({ route }: RecordDetailScreenProps) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.backLink}>
+          <Icon name="chevron-left" size={18} color={theme.colors.textSecondary} strokeWidth={2} />
+          <Text style={styles.backLinkText}>Back</Text>
+        </Pressable>
+
         <View style={styles.header}>
           <View style={styles.typeBadge}>
+            <Icon name="file-text" size={14} color={theme.colors.accent} strokeWidth={2} />
             <Text style={styles.typeBadgeText}>{record.fhir_resource_type}</Text>
           </View>
           <Text style={styles.dateText}>
@@ -75,13 +82,19 @@ export function RecordDetailScreen({ route }: RecordDetailScreenProps) {
           </Text>
         </View>
 
-        <Card>
-          <Text style={styles.sectionTitle}>FHIR Data</Text>
+        <Card variant="elevated">
+          <View style={styles.cardHeader}>
+            <Icon name="activity" size={18} color={theme.colors.accent} strokeWidth={1.8} />
+            <Text style={styles.sectionTitle}>FHIR Data</Text>
+          </View>
           {renderFHIRData(record.fhir_data)}
         </Card>
 
-        <Card style={styles.metaCard}>
-          <Text style={styles.sectionTitle}>Metadata</Text>
+        <Card style={styles.metaCard} variant="elevated">
+          <View style={styles.cardHeader}>
+            <Icon name="settings" size={18} color={theme.colors.accent} strokeWidth={1.8} />
+            <Text style={styles.sectionTitle}>Metadata</Text>
+          </View>
           <View style={styles.row}>
             <Text style={styles.label}>Source</Text>
             <Text style={styles.value}>{record.source_type}</Text>
@@ -111,12 +124,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: theme.spacing.lg,
     gap: theme.spacing.lg,
+    paddingBottom: theme.spacing.huge,
   },
   header: {
     marginBottom: theme.spacing.md,
   },
   typeBadge: {
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
     backgroundColor: theme.colors.accentLight,
     borderRadius: theme.borderRadius.md,
     paddingHorizontal: theme.spacing.md,
@@ -132,10 +149,15 @@ const styles = StyleSheet.create({
     ...theme.typography.bodySmall,
     color: theme.colors.textSecondary,
   },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
+  },
   sectionTitle: {
     ...theme.typography.heading3,
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.md,
   },
   metaCard: {
     marginBottom: theme.spacing.xxl,
@@ -171,6 +193,17 @@ const styles = StyleSheet.create({
     color: theme.colors.accent,
     fontWeight: '600',
     marginBottom: theme.spacing.sm,
+  },
+  backLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+    marginBottom: theme.spacing.md,
+  },
+  backLinkText: {
+    ...theme.typography.bodySmall,
+    color: theme.colors.textSecondary,
+    fontWeight: '500',
   },
   errorText: {
     ...theme.typography.body,
