@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
-  const handleLogin = (user: { email: string; password: string }) => {
-    console.log('User logged in succesfully:', user);
-    router.push('./profile'); // Redirect to profile page after successful login
+
+  const handleLogin = () => {
+    router.push('/profile');
   };
 
   return (

@@ -28,6 +28,7 @@ graph TB
 
     subgraph "Apps"
         DASHBOARD["@mediphi/dashboard<br/>Next.js 15 App Router"]
+        MOBILE["@mediphi/mobile<br/>Expo React Native"]
     end
 
     subgraph "Shared Packages"
@@ -39,9 +40,12 @@ graph TB
     end
 
     ROOT --> DASHBOARD
+    ROOT --> MOBILE
     ROOT --> SHARED
     DASHBOARD --> SHARED
+    MOBILE --> SHARED
     DASHBOARD --> SUPABASE
+    MOBILE --> SUPABASE
 ```
 
 ```mermaid
@@ -89,6 +93,7 @@ graph TD
     A --> F["package.json<br/>npm workspaces"]
 
     B --> G["dashboard/<br/>@mediphi/dashboard"]
+    B --> M["mobile/<br/>@mediphi/mobile"]
 
     G --> G1["app/<br/>Next.js App Router"]
     G --> G2["components/<br/>React components"]
@@ -103,6 +108,13 @@ graph TD
 
     G2 --> G2a["forms/<br/>LoginForm, SignupForm"]
     G2 --> G2b["profile/<br/>ProfileInfo, ProfileButtons, Profile"]
+
+    M --> M1["screens/<br/>Auth, Home, Records, QR, Profile"]
+    M --> M2["navigation/<br/>Stack + Tab navigators"]
+    M --> M3["context/<br/>AuthContext"]
+    M --> M4["hooks/<br/>useProfile, useMedicalRecords"]
+    M --> M5["components/<br/>Reusable UI components"]
+    M --> M6["theme.ts<br/>Color tokens, typography"]
 
     C --> H["shared/<br/>@mediphi/shared"]
     H --> H1["src/constants.ts<br/>FHIR types, IDs, enums"]
@@ -473,15 +485,44 @@ graph TD
 | `apps/dashboard/app/components/profile/ProfileButtons.tsx` | QR + actions | `qrcode.react` for QRCodeSVG |
 | `packages/shared/src/constants.ts` | Shared constants | FHIR labels, ID prefix, enums |
 | `supabase/migrations/20260530000000_initial_schema.sql` | DB schema | All tables, enums, indexes, RLS policies |
+| `supabase/migrations/20260531000000_add_auth_trigger.sql` | Auth trigger | Auto-generates MPH-ID on user signup |
+| `apps/mobile/App.tsx` | Entry point | AuthProvider + RootNavigator |
+| `apps/mobile/theme.ts` | Mobile theme | Colors, spacing, typography tokens |
+| `apps/mobile/context/AuthContext.tsx` | Auth state | Supabase auth + onboarding gate |
+| `apps/mobile/navigation/RootNavigator.tsx` | Root nav | Auth / Onboarding / Main tabs switcher |
+| `apps/mobile/navigation/MainTabsNavigator.tsx` | Bottom tabs | Home, Records, QR, Profile |
+| `apps/mobile/screens/auth/WelcomeScreen.tsx` | Welcome | Logo, features, auth CTAs |
+| `apps/mobile/screens/auth/LoginScreen.tsx` | Login | Email + password, real Supabase auth |
+| `apps/mobile/screens/auth/SignupScreen.tsx` | Signup | Name, email, password, strength indicator |
+| `apps/mobile/screens/onboarding/MediPhiIDRevealScreen.tsx` | Onboarding | Animated MPH-ID reveal |
+| `apps/mobile/screens/home/HomeScreen.tsx` | Home | Greeting, stats, recent records |
+| `apps/mobile/screens/records/RecordsListScreen.tsx` | Records list | FHIR category tabs, record rows |
+| `apps/mobile/screens/records/RecordDetailScreen.tsx` | Record detail | FHIR JSON renderer |
+| `apps/mobile/screens/qr/MyQRCodeScreen.tsx` | QR Code | Full-screen scannable QR |
+| `apps/mobile/screens/profile/ProfileScreen.tsx` | Profile | User info, vault stats, sign out |
+| `apps/mobile/hooks/useProfile.ts` | Profile hook | Fetch current user profile |
+| `apps/mobile/hooks/useMedicalRecords.ts` | Records hook | Fetch + realtime subscribe to records |
+| `apps/mobile/components/common/Button.tsx` | Button | Primary, secondary, outline, danger variants |
+| `apps/mobile/components/common/Input.tsx` | Input | Text input with label, error, password toggle |
+| `apps/mobile/components/common/Card.tsx` | Card | Surface container with shadow |
+| `apps/mobile/components/common/LoadingScreen.tsx` | Loading | Full-screen spinner |
+| `apps/mobile/components/common/EmptyState.tsx` | Empty state | Illustration + text for empty lists |
 
 ---
 
 ## 12. Build Commands
 
 ```bash
-# Dev server (runs via Turborepo)
-cd C:\Users\pvmod\Programming\MediPhi\mediphi
+# Dashboard dev server
+cd apps/dashboard
 npm run dev
+
+# Mobile app (Expo)
+cd apps/mobile
+npm run dev     # Starts Expo on port 8081
+npm run android # Android simulator
+npm run ios     # iOS simulator
+npm run web     # Web preview
 
 # Production build
 cd apps/dashboard
@@ -495,7 +536,7 @@ cd apps/dashboard
 npm run lint
 ```
 
-**Port:** `http://localhost:3000`
+**Dashboard Port:** `http://localhost:3000`
 
 ---
 
@@ -505,10 +546,11 @@ npm run lint
 2. **Preflight is sacred:** Do not add global `*` resets. Preflight already handles `box-sizing` and sensible defaults.
 3. **No `[class*="..."]` wildcards:** These override Tailwind utilities silently due to equal specificity + later source order.
 4. **Animation opacity:** All animated elements need `style={{ opacity: 0 }}` to prevent flash before CSS animation begins.
-5. **Mock user data:** `profile/page.tsx` uses a simulated `getUser()` with hardcoded `Philip Varghese Modayil`.
-6. **Medical records page** uses placeholder static data, not yet connected to Supabase.
-7. **Auth forms** use simulated 2s delays — not yet connected to Supabase Auth.
-8. **QR sessions expire in 5 minutes** (`QR_SESSION_EXPIRY_MINUTES = 5`).
+5. **Dashboard mock user data:** `profile/page.tsx` still uses simulated `getUser()` with hardcoded data — needs Supabase integration.
+6. **Dashboard auth forms** still use simulated delays — not yet connected to Supabase Auth.
+7. **QR sessions expire in 5 minutes** (`QR_SESSION_EXPIRY_MINUTES = 5`).
+8. **Mobile app auth is live:** Mobile app now uses real Supabase Auth with auto-generated MPH-ID via database trigger.
+9. **Mobile onboarding:** `date_of_birth` and `qr_data` are nullable in profiles to support progressive onboarding.
 
 ---
 
@@ -521,6 +563,13 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
+Create `apps/mobile/.env.local`:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
 ---
 
-*Last updated: 2026-05-30*
+*Last updated: 2026-05-31*

@@ -1,16 +1,31 @@
 import React from 'react';
 import Link from "next/link";
 
-type User = {
+interface ProfileData {
   id: string;
-  name: string;
-  age: number;
-  sex: string;
-  role: string;
+  mediphi_id: string;
+  full_name: string;
+  date_of_birth: string | null;
+  sex: string | null;
+  email: string | null;
+  phone: string | null;
+  created_at: string;
 }
 
-export default function ProfileInfo({ user }: { user: User }) {
-  const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2);
+function calculateAge(dob: string): number {
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+export default function ProfileInfo({ profile }: { profile: ProfileData }) {
+  const initials = profile.full_name.split(' ').map(n => n[0]).join('').slice(0, 2);
+  const age = profile.date_of_birth ? calculateAge(profile.date_of_birth) : null;
 
   return (
     <div className="bg-surface rounded-3xl shadow-lg p-8 overflow-hidden">
@@ -19,20 +34,24 @@ export default function ProfileInfo({ user }: { user: User }) {
           <span className="text-xl font-bold text-accent">{initials}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-bold text-text-primary tracking-tight mb-1">{user.name}</h2>
-          <div className="text-sm text-accent font-semibold mb-3">MPH-{user.id}</div>
+          <h2 className="text-xl font-bold text-text-primary tracking-tight mb-1">{profile.full_name}</h2>
+          <div className="text-sm text-accent font-semibold mb-3">{profile.mediphi_id}</div>
           <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-bg rounded-xl text-sm font-medium text-text-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-secondary">
-                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              {user.age} yrs
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-bg rounded-xl text-sm font-medium text-text-primary">
-              {user.sex}
-            </span>
+            {age !== null && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-bg rounded-xl text-sm font-medium text-text-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-secondary">
+                  <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {age} yrs
+              </span>
+            )}
+            {profile.sex && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-bg rounded-xl text-sm font-medium text-text-primary">
+                {profile.sex.charAt(0).toUpperCase() + profile.sex.slice(1)}
+              </span>
+            )}
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-light rounded-xl text-sm font-semibold text-accent">
-              {user.role}
+              Patient
             </span>
           </div>
         </div>
@@ -91,13 +110,11 @@ export default function ProfileInfo({ user }: { user: User }) {
         </div>
       </div>
 
-      {user.role !== "Doctor" && (
-        <div className="mt-6 pt-6 border-t border-border">
-          <Link href="/doctor-verification" className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-            Are you a healthcare provider?
-          </Link>
-        </div>
-      )}
+      <div className="mt-6 pt-6 border-t border-border">
+        <Link href="/doctor-verification" className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
+          Are you a healthcare provider?
+        </Link>
+      </div>
     </div>
   );
 }

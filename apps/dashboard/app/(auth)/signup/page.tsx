@@ -6,17 +6,15 @@ import { useRouter } from 'next/navigation';
 const SignUpPage: React.FC = () => {
   const router = useRouter();
 
-  const handleSignup = (user: { email: string; password: string }) => {
-    
-    console.log('User signed up successfully:', user);
-    router.push('./login'); // Redirect to login page after successful signup
+  const handleSignup = () => {
+    router.push('/login');
   };
-  
+
   return (
     <div className='signup-page'>
       <SignupForm onSignup={handleSignup} />
-      </div>
-  )
-}
+    </div>
+  );
+};
 
-export default SignUpPage
+export default SignUpPage;

@@ -3,15 +3,18 @@ import React from 'react';
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 
-type User = {
+interface ProfileData {
   id: string;
-  name: string;
-  age: number;
-  sex: string;
-  role: string;
+  mediphi_id: string;
+  full_name: string;
+  date_of_birth: string | null;
+  sex: string | null;
+  email: string | null;
+  phone: string | null;
+  created_at: string;
 }
 
-export default function ProfileButtons({ user }: { user: User }) {
+export default function ProfileButtons({ profile }: { profile: ProfileData }) {
   return (
     <div className="space-y-5">
       <div className="bg-surface rounded-3xl shadow-lg p-8 overflow-hidden">
@@ -23,7 +26,7 @@ export default function ProfileButtons({ user }: { user: User }) {
         <div className="flex justify-center mb-5">
           <div className="bg-surface rounded-2xl p-3 border border-border">
             <QRCodeSVG 
-              value={JSON.stringify({ mediphi_id: `MPH-${user.id}`, name: user.name })} 
+              value={JSON.stringify({ mediphi_id: profile.mediphi_id, name: profile.full_name })} 
               size={160}
               bgColor="#FFFFFF"
               fgColor="#2D2A26"
@@ -32,7 +35,7 @@ export default function ProfileButtons({ user }: { user: User }) {
         </div>
 
         <div className="text-center">
-          <div className="text-lg font-bold text-text-primary tracking-tight mb-1">MPH-{user.id}</div>
+          <div className="text-lg font-bold text-text-primary tracking-tight mb-1">{profile.mediphi_id}</div>
           <div className="text-xs text-text-secondary font-medium">Scan to access records</div>
         </div>
       </div>

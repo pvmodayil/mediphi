@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-
-type User = {
-    name: string;
-    email: string;
-    password: string;
-};
+import { supabase } from "../../../lib/supabase";
 
 interface SignupFormProps {
-    onSignup: (user: User) => void;
+    onSignup: () => void;
 }
 
 function SignupForm({ onSignup }: SignupFormProps) {
@@ -24,18 +19,28 @@ function SignupForm({ onSignup }: SignupFormProps) {
             setError("Please fill in all required fields.");
             return;
         }
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters.");
+            return;
+        }
         setLoading(true);
         setError(null);
 
-        try {
-            const user = { name, email, password };
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            onSignup(user);
-        } catch {
-            setError("Signup failed. Please try again.");
-        } finally {
-            setLoading(false);
+        const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { full_name: name },
+            },
+        });
+
+        if (signUpError) {
+            setError(signUpError.message || "Signup failed. Please try again.");
+        } else {
+            onSignup();
         }
+
+        setLoading(false);
     };
 
     return (

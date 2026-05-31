@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-
-type User = {
-    email: string;
-    password: string;
-};
+import { supabase } from "../../../lib/supabase";
 
 interface LoginFormProps {
-    onLogin: (user: User) => void;
+    onLogin: () => void;
 }
 
 function LoginForm({ onLogin }: LoginFormProps) {
@@ -25,15 +21,18 @@ function LoginForm({ onLogin }: LoginFormProps) {
         setLoading(true);
         setError(null);
 
-        try {
-            const user = { email, password };
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            onLogin(user);
-        } catch {
-            setError("Login failed. Please try again.");
-        } finally {
-            setLoading(false);
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (signInError) {
+            setError(signInError.message || "Invalid email or password.");
+        } else {
+            onLogin();
         }
+
+        setLoading(false);
     };
 
     return (
